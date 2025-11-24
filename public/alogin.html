@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login</title>
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #1a1a1a;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      color: #f0f0f0;
+    }
+
+    .card {
+      background: #2a2a2a;
+      padding: 30px;
+      width: 350px;
+      border-radius: 18px;
+      box-shadow: 0 4px 15px rgba(255, 0, 128, 0.25);
+      text-align: center;
+      border: 1px solid #ff4d88;
+    }
+
+    h2 {
+      color: #ff80c0;
+      margin-bottom: 20px;
+    }
+
+    input {
+      width: 95%;
+      padding: 10px;
+      background: #1e1e1e;
+      color: #ffffff;
+      border: 2px solid #ff4d88;
+      border-radius: 10px;
+      margin-top: 10px;
+      transition: 0.2s;
+    }
+
+    input:focus {
+      border-color: #ff99c9;
+      outline: none;
+      box-shadow: 0 0 6px #ff99c9;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      background: #ff2673;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 15px;
+      font-weight: bold;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      background: #ff4d88;
+    }
+
+    a {
+      color: #ff80c0;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="card">
+  <h2>Admin Login</h2>
+
+  <input type="email" id="email" placeholder="Email Admin">
+  <input type="password" id="password" placeholder="Password">
+
+  <button onclick="loginAdmin()">Login</button>
+
+  <p style="margin-top:10px;font-size:14px;">
+    Belum punya akun?
+    <a href="aregister.html">Register di sini</a>
+  </p>
+</div>
+
+<script>
+  async function loginAdmin() {
+    const email = document.getElementById('email').value
+    const password = document.getElementById('password').value
+
+    const res = await fetch('/login-admin', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    })
+
+    const data = await res.json()
+
+    if (data.success) {
+      window.location.href = "admin.html"
+    } else {
+      alert("Login gagal! Email atau password salah.")
+    }
+  }
+</script>
+
+</body>
+</html>
