@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #1a1a1a;
+      padding: 30px;
+      margin: 0;
+      color: #f0f0f0;
+    }
+
+    h1 {
+      text-align: center;
+      color: #ff80c0;
+      margin-bottom: 10px;
+    }
+
+    h2 {
+      color: #ff99cc;
+      margin-top: 20px;
+    }
+
+    .logout-btn {
+      background-color: #ff2673;
+      border: none;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.2s;
+      font-size: 14px;
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      font-weight: bold;
+    }
+
+    .logout-btn:hover {
+      background-color: #ff4d88;
+      transform: scale(1.05);
+    }
+
+    .logout-btn:active {
+      background-color: #cc0059;
+      transform: scale(0.97);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background: #2a2a2a;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(255, 0, 128, 0.25);
+      border: 1px solid #ff4d88;
+    }
+
+    th, td {
+      padding: 12px;
+      border-bottom: 1px solid #3b3b3b;
+      text-align: left;
+    }
+
+    th {
+      background: #ff4d88;
+      color: white;
+    }
+
+    tr:hover {
+      background-color: #333;
+    }
+
+    .delete-btn {
+      background-color: #ff1744;
+      border: none;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.2s;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    .delete-btn:hover {
+      background-color: #d50000;
+      transform: scale(1.05);
+    }
+
+    .delete-btn:active {
+      background-color: #9b0000;
+      transform: scale(0.97);
+    }
+
+    .status-online { color: #00e676; font-weight: bold; }
+    .status-offline { color: #ff1744; font-weight: bold; }
+  </style>
+</head>
+
+<body>
+
+<h1>Admin Dashboard</h1>
+
+<h2>List User & API Key</h2>
+
+<table id="Table">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Nama Depan</th>
+      <th>Nama Belakang</th>
+      <th>Email</th>
+      <th>API Key</th>
+      <th>Status Key</th>
+      <th>Hapus</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<button class="logout-btn" onclick="logout()">Logout</button>
+
+<script>
+  async function loadDashboard() {
+    const res = await fetch('/dashboard-data')
+    const data = await res.json()
+
+    if (!data.success) {
+      alert("Gagal memuat data dashboard")
+      return
+    }
+
+    const tbody = document.querySelector("#Table tbody")
+    tbody.innerHTML = ""
+
+    data.users.forEach(u => {
+      const key = data.apikeys.find(k => k.id === u.apikey_id)
+
+      tbody.innerHTML += `
+        <tr>
+          <td>${u.id}</td>
+          <td>${u.first_name}</td>
+          <td>${u.last_name}</td>
+          <td>${u.email}</td>
+          <td>${key ? key.key : "-"}</td>
+          <td class="${key && key.status === 'online' ? 'status-online' : 'status-offline'}">
+            ${key ? key.status : "Tidak Ada"}
+          </td>
+          <td>
+            <button class="delete-btn" onclick="deleteUser(${u.id})">Delete</button>
+          </td>
+        </tr>
+      `
+    })
+  }
+
+  async function deleteUser(id) {
+    if (!confirm("Yakin ingin menghapus user ini?")) return
+
+    const res = await fetch(`/delete-user/${id}`, { method: "DELETE" })
+    const data = await res.json()
+
+    if (data.success) {
+      alert("User berhasil dihapus")
+      loadDashboard()
+    } else {
+      alert("Gagal menghapus user")
+    }
+  }
+
+  function logout() {
+    window.location.href = 'alogin.html'
+  }
+
+  loadDashboard()
+</script>
+
+</body>
+</html>
