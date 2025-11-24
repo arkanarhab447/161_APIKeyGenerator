@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API Key</title>
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #1a1a1a; /* dark background */
+      color: #f0f0f0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background-color: #2a2a2a;
+      border-radius: 20px;
+      padding: 30px;
+      width: 380px;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(255, 0, 128, 0.25);
+      border: 1px solid #ff4d88;
+    }
+
+    h1, h3 {
+      color: #ff80c0;
+      letter-spacing: 1px;
+    }
+
+    input, textarea {
+      width: 95%;
+      padding: 10px;
+      border-radius: 12px;
+      border: 2px solid #ff4d88;
+      background-color: #1e1e1e;
+      color: #fff;
+      margin-top: 8px;
+      resize: none;
+      transition: 0.2s;
+    }
+
+    input:focus, textarea:focus {
+      border-color: #ff99c9;
+      outline: none;
+      box-shadow: 0 0 5px #ff99c9;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      border-radius: 12px;
+      background: #ff2673;
+      color: white;
+      border: none;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: 0.2s;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background-color: #ff4d88;
+    }
+
+    hr {
+      border: none;
+      height: 1px;
+      background-color: #444;
+      margin: 20px 0;
+    }
+  </style>
+</head>
+
+<body>
+<div class="container">
+  <h1>User & API Key</h1>
+
+  <input type="text" id="fname" placeholder="First Name">
+  <input type="text" id="lname" placeholder="Last Name">
+  <input type="email" id="email" placeholder="Email Address">
+
+  <hr>
+
+  <button onclick="buatApiKey()">Generate API Key</button>
+  <textarea id="apikey" readonly placeholder="API Key akan muncul di sini..."></textarea>
+
+  <hr>
+
+  <button onclick="saveUser()">Save User dan APIKey</button>
+</div>
+
+<script>
+  async function buatApiKey() {
+    const res = await fetch('/create', { method: 'POST' })
+    const data = await res.json()
+    if (data.success) {
+      document.getElementById('apikey').value = data.apiKey
+    }
+  }
+
+  async function saveUser() {
+    const apiKey = document.getElementById('apikey').value
+    if (!apiKey) return alert("Buat API key dulu!")
+
+    const body = {
+      firstName: document.getElementById('fname').value,
+      lastName: document.getElementById('lname').value,
+      email: document.getElementById('email').value,
+      apiKey: apiKey
+    }
+
+    const res = await fetch('/save-user', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    })
+
+    const data = await res.json()
+    if (data.success) alert("User berhasil disimpan!")
+      window.location.href = "alogin.html"; 
+  }
+</script>
+
+</body>
+</html>
